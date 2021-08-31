@@ -104,3 +104,44 @@ class App extends React.Component {
 ```
 
 Desta forma, nosso código fica muito mais compacto e dinâmico, criando **n** conforme o tamanho da minha lista de tarefas. 
+
+## Checagem de tipos, PropTypes
+
+A checagem de tipos é importante dentro do React, pois previne situações nas quais é passado alguma `prop` cujo o tipo não é esperado. Isto é feito da seguinte forma:
+
+```jsx
+import React from 'react';
+import PropTypes from 'prop-types';
+
+class Greeting extends React.Component {
+  render() {
+    return (<h1>Hello, {this.props.name} {this.props.lastName}</h1>);
+  }
+}
+
+Greeting.propTypes = {
+  name: PropTypes.string,
+  lastName: PropTypes.string,
+};
+
+export default Greeting;
+```
+Vamos entender o que está sendo feito aqui.
+1. Primeiro importamos o `prop-types` no component.
+>_Obs: Pode ser que seja necessário utlizar o `npm install --save-dev prop-types` caso não tenha utilizado o `create-react-app` para inicializar o aplicativo **React**_. 
+2. Depois fazemos a verificação dos tipos, antes de exportar o componente:
+```jsx
+Greeting.propTypes = {
+  name: PropTypes.string,
+  lastName: PropTypes.string,
+};
+```
+Acima estamos _'settando'_ que as _props_ `name` e `lastName` sejam do tipo `string`. O `PropTypes` pode vir acompanhado de outros parâmetros, como: `.number`, `.bool`, `.func`, `.object`, `.array`.  
+Além disso, é possível dizer que uma `prop` é obrigatória utilizando o `.isRequired`:
+```jsx
+Greeting.propTypes = {
+  name: PropTypes.string.isRequired,
+  lastName: PropTypes.string,
+};
+```
+Desta forma garantimos que _props_ essenciais para o funcionamento do componente sejam passadas.
