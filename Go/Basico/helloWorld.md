@@ -279,4 +279,70 @@ for i := 0; i < 10; i++ {
 }
 ```
 
+## Tratando erros
+
+Algumas funções do _Go_ possuem dois retornos, como é o caso do `http.Get()`. No caso, o primeiro retorno é a resposta de requisição http e o segundo retorno é um erro. Normalmente para verificar o erro, o que podemos fazer é sempre printá-lo logo após a execução da funçao:
+
+```go
+resp, err := http.Get(url)
+if err != nil {
+	fmt.Println("Erro:", err)
+}
+```
+
+## Arquivos em Go
+
+Para abrir um arquivo em _Go_ há diversas maneiras, cada uma delas para um propósito.
+Uma delas, para ler um arquivo inteiro, usamos o pacote `io/ioutil` para isso:
+
+```go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+
+func main() {
+	arquivo, err := ioutil.ReadFile("nomeDoArquivo.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(arquivo))
+}
+```
+Se printarmos o `arquivo` veremos um _array_ de _bytes_, para converter isso em _string_ usamos a função `string(arquivo)`. 
+
+Já para ler um arquivo linha por linha podemos usar dois pacotes em conjunto, que são o `os` e o `bufio`:
+
+```go
+package main
+
+import (
+	"fmt"
+	"bufio"
+	"os"
+)
+
+func main() {
+	arquivo, err := os.Open("nomeDoArquivo")
+	
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	leitor := bufio.NewReader(arquivo)
+	linha, err := leitor.ReadString('\n')
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(linha)
+}
+```
+Primeiramente abrimos o arquivo com o `os.Open()`, e capturamos tanto o arquivo quanto o erro. Se tentarmos ler o arquivo nessa momento, teremos como retorno um hexadecimal (acho que é o endereço de memória). Para tornar isso legível, usamos a função `bufio.NewReader(arquivo)` e atribuimos esse resultado a um leitor, que possui uma função `.ReadString("<delimitador>")` que recebe por parâmetro um delimitador que diz até onde devemos ler a linha, e atribuimos esse retorno à duas variáveis, uma linha e um erro. Se não houver erro, e printarmos `linha` teremos a informação desejada. É uma boa prática fechar o arquivo após utilizá-lo, para isso usamos o seguinte comando `arquivo.Close()`.
+
+
 
