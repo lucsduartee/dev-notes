@@ -344,5 +344,37 @@ func main() {
 ```
 Primeiramente abrimos o arquivo com o `os.Open()`, e capturamos tanto o arquivo quanto o erro. Se tentarmos ler o arquivo nessa momento, teremos como retorno um hexadecimal (acho que é o endereço de memória). Para tornar isso legível, usamos a função `bufio.NewReader(arquivo)` e atribuimos esse resultado a um leitor, que possui uma função `.ReadString("<delimitador>")` que recebe por parâmetro um delimitador que diz até onde devemos ler a linha, e atribuimos esse retorno à duas variáveis, uma linha e um erro. Se não houver erro, e printarmos `linha` teremos a informação desejada. É uma boa prática fechar o arquivo após utilizá-lo, para isso usamos o seguinte comando `arquivo.Close()`.
 
+Agora para criar um arquivo, podemos usar também uma função do pacote `os`, no caso,
+`.OpenFile()`. Essa função recebe dois parâmetros, que são `("<nomeDoArquivo>", <flags>, <permissões>)`. As `flags` indicam o que eu quero fazer com arquivo, podem ser:
+
+```go
+	// Exactly one of O_RDONLY, O_WRONLY, or O_RDWR must be specified.
+	O_RDONLY int = syscall.O_RDONLY // open the file read-only.
+	O_WRONLY int = syscall.O_WRONLY // open the file write-only.
+	O_RDWR   int = syscall.O_RDWR   // open the file read-write.
+	// The remaining values may be or'ed in to control behavior.
+	O_APPEND int = syscall.O_APPEND // append data to the file when writing.
+	O_CREATE int = syscall.O_CREAT  // create a new file if none exists.
+	O_EXCL   int = syscall.O_EXCL   // used with O_CREATE, file must not exist.
+	O_SYNC   int = syscall.O_SYNC   // open for synchronous I/O.
+	O_TRUNC  int = syscall.O_TRUNC  // truncate regular writable file when opened.
+```
+E sobre as permissões, são as padrão do Linux em formato numérico.
+Exemplo prático da criação de um arquivo:
+
+```go
+arquivo, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+```
+
+No caso desse comando acima, eu criei um arquivo com o nome de `log.txt`, as flags indicam que posso ler e escrever o arquivo ou criá-lo caso nao exista, e as permissões são `0666`.
+
+Uma vez criado o arquivo, eu posso escrever nele utilizando o `arquivo.WriteString(<string>)`.
 
 
+## Formatando tempo em GO
+
+Para formatar tempo em _Go_ utilizamos o pacote `"time"` por meio da função `time.Now()`. Essa função me traz como retorno o momento atual, se concatenado com  a função `.Format()` consigo deixar essa saída no formato que eu desejar. O Go possui um jeito peculiar de formatar datas e horários, esse modo pode ser consultado na [documentação](https://golang.org/src/time/format.go). Exemplo para um formato de `dd/mm/aaaa hh:mm:ss`:
+
+```go
+time.Now().Format("02/01/2006 15:04:05")
+```
