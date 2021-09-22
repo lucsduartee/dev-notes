@@ -37,3 +37,67 @@ it('retorna o quadrado de um número',  () => {
 });
 ```
 É válido ressaltar que o teste funciona para qualquer tipo de implementação dessa função `calculaQuadrado`, ela pode o retorno dela pode ser tanto `numero * numero` como também pode ser `Math.pow(numero, 2)`. O teste deve ser independente da implementação.
+
+## Testanto componentes React
+
+Uma das maneira de garantir, testar, que certa informação sempre seja renderizada é utilizando os **snapshots**. Gosto de pensar neles como se fossem imagem ideais do nosso código, que são usadas para comparar com o que de fato está sendo renderizado. Vamos supor que tenhamos um componente da seguinte maneira:
+
+```jsx
+import React, { Component } from 'react';
+
+class Greeting extends React.Component {
+  render() {
+    const { props: { name, age, city} } = this;
+    return (
+      <div>
+        <p>{name}</p>
+        <p>{age}</p>
+        <p>{city}</p>
+      </div>
+    );
+  }
+}
+
+export default Greeting;
+```
+
+Esse componente recebe três parâmetros. Para garantir que esse componente sempre seja renderizado dessa forma, utilizamos o test Snapshot. Veja a implementação desse teste:
+
+```js 
+import React from 'react';
+import { render } from '@testing-library/react';
+import Greetings from './Greetings';
+
+describe('Componente de saudações', () => {
+  it('O snapshot do componente deve permanecer o sempre o mesmo', () => {
+    const { container } = render(
+      <Greetings 
+        name="Fulano"
+        age="27"
+        city="Terra do Nunca"
+      />
+    );
+
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+```
+O `container` contém o retorno da renderização da função `render()`.
+Assim que esse teste for executado, ele criará um diretório `snapshots` contendo um arquivo `snap` com esse elemento criado no teste: 
+```js
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Componente de transação do extrato O snapshot do componente deve permanecer sempre o mesmo 1`] = `
+<div>
+  <p>
+    Fulano
+  </p>
+  <p>
+    27
+  </p>
+  <p>
+   Terra do Nunca
+  </p>
+</div>
+`;
+```
