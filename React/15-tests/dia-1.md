@@ -23,3 +23,7 @@ Agora vamos analizar cada esse trecho de código.
 - **O Teste**: primeiramente o componente `App` é renderizado, por meio da função `render()`, logo na linha abaixo, está o teste em si. Nessa linha é verificado se a string `Algum Texto` está contida no conteúdo renderizado no _DOM_. Podemos ler da seguinte maneira:
 > Ou Screen, procura pelo texto "Algum Texto" aí na DOM. Eu espero que esse texto esteja no Documento.
 Podemos ter um describe dentro do outro, sem problemas.
+
+## Testando funções
+
+Precisamos garantir também que as funções contidas na nossa aplicação sejam executadas da maneira correta e que seus retornos sejam conforme o esperado.
