@@ -26,4 +26,14 @@ Podemos ter um describe dentro do outro, sem problemas.
 
 ## Testando funções
 
-Precisamos garantir também que as funções contidas na nossa aplicação sejam executadas da maneira correta e que seus retornos sejam conforme o esperado.
+Precisamos garantir também que as funções contidas na nossa aplicação sejam executadas da maneira correta e que seus retornos sejam conforme o esperado.  
+Suponhamos que exista uma função que eleva qualquer número ao quadrado, `calculaQuadrado(numero)`. Para testá-la, podemos chamá-la dentro de um `it`:
+
+```js
+import calculaQuadrado from './calculaQuadrado';
+it('retorna o quadrado de um número',  () => {
+  const quadrado = calculaQuadrado(5);
+  expect(quadrado).toBe(25);
+});
+```
+É válido ressaltar que o teste funciona para qualquer tipo de implementação dessa função `calculaQuadrado`, ela pode o retorno dela pode ser tanto `numero * numero` como também pode ser `Math.pow(numero, 2)`. O teste deve ser independente da implementação.
