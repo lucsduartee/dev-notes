@@ -1,0 +1,2 @@
+# Iniciando um projeto Node
+Primeiramente vamos em um diretório e dentro dele utilizamos o comando `npm init` no terminal. Logo em seguida apareceram uma série de perguntas para responder, e então um arquivo `package.json` será criado contendo informações completas referentes as perguntas que foram respondidas. É possível criar esse arquivo de maneira mais rápida, utilizando o comando `npm init -y`, dessa maneira todas as perguntas feitas serão respondidas com _sim_.
