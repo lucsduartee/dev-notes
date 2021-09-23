@@ -1,4 +1,5 @@
 # React Test Library e Jest
+[Documentação](https://testing-library.com/)
 ---
 ## Começando com testes
 
@@ -209,3 +210,75 @@ describe('Quando realizo uma ação', () => {
 });
 ```
 O próprio `screen` nos dá acesso as mesmas funções fornecidas pelo `render()`.
+
+## Simulando o retorno de API
+
+Para simular o retorno de uma API, precisamos usar um mock do _Jest_. Se por exemplo, temos uma função, que faz requisições para API, vinda de uma módulo, podemos usar uma função do _Jest_, que é a `mock()` para mockar todo o módulo. E usando uma outra função do jest, podemos _settar_ nosso retorno.
+
+```jsx
+import api from './api';
+
+jest.mock('./api')
+
+api.nome_da_funcao.mockResolvedValue(/* retorno mockado desejado*/);
+```
+O objeto `screen` fornece uma função que nos auxilia quando estamos lidando com códigos assíncronos, essa função é a `findByText()`. Ela retorna uma promise, por isso podemos usá-la com `async` e `await` da seguinte forma: 
+
+```jsx
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import api from './api';
+import App from './App';
+
+jest.mock('./api');
+
+decribe('requisiçao para api', () => {
+  it('exibir dado por meio da API', async () => {
+    api.listaDeNomes.mockResolvedValue([
+      {
+        "nome": "Roberto",
+        "sobrenome": "Carl",
+        "data": "10/08/2020",
+        "id": 1
+      },
+      {
+        "sobrenome": "Carlito",
+        "nome": "Rob",
+        "data": "26/09/2020",
+        "id": 2
+      }
+    ])
+
+    render(<App />);
+    expect(await screen.findByText('Carlito')).toBeInTheDocument();
+  })
+})
+```
+No código acima estamos _mockando_ o retorno da função que traz uma lista de nomes para ser esse array com dois objetos. Na linha 253, eu tenho um `expect` que contém como argumento uma espera de resolução de uma _promise_. O `findByText` espera o retorno da _API_ e só depois procura pelo nome `Carlito`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
