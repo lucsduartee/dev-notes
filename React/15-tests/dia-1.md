@@ -101,3 +101,111 @@ exports[`Componente de transação do extrato O snapshot do componente deve perm
 </div>
 `;
 ```
+
+## React Testing Library
+
+O _RTL_ permite simular a interação do usuário da maneira mais próxima da realidade! Podemos imaginar uma situação em que temos um determinado componente, que renderizar um número inicial, e a partir desse número podemos incrementar ou decrementar em uma unidade esse valor:
+
+```jsx
+// ...
+<div>
+  <label>
+    Incrementar
+    <input 
+      type="radio"
+      name="maisoumenos"
+      value="incrementar"
+      onChange={handleChange}
+      data-testid="maisoumenos"
+      checked={action.type === 'incrementar'}
+    />
+  </label>
+</div>
+
+<div>
+  <label>
+  Decrementar
+  <input
+    type="radio"
+    name="maisoumenos"
+    value="decrementar"
+    onChange={handleChange}
+    data-testid="maisoumenos"
+    checked={action.type === 'decrementar'}
+  />
+  </label>
+</div>
+
+<div>
+    <button type='submit'>
+        Realizar ação
+    </button>
+</div>
+// ...
+```
+Agora podemos escrever testes para garantir que as interações do usuário disparem as ações desejadas.
+
+```jsx
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import App from './App';
+
+describe('Quando realizo uma ação', () => {
+  it('que é do tipo incrementar, há um incremento', () => {
+    const { getBytext, getByLabelText } = render(<App />);
+
+    // trazendo valor inicial pelo texto
+    const initialValue = getBytext('10');
+    // trazendo ação pelo texto da label
+    const action = getByLabelText('Incrementar');
+    // trazendo o botão pelo texto dele
+    const button = getByText('Realizar ação');
+
+    // primeiro testamos se o valor inicial é realmente 10
+    expect(initialValue.textContent).toBe('10');
+
+    // agora simulamos os eventos utilizando a função fireEvent
+    fireEvent.click(action, { target: { value: 'incrementar' } });
+    // simulamos o clique no botão
+    fireEvent.click(button);
+
+    // testamos se o novo valor agora é 11
+    expect(initialValue.textContent).toBe('11');
+  });
+});
+```
+O segundo parâmetro do `click` ou `change` é um `target` cujo o `value` é correspondente ao estado no momento do evento.
+
+## Renderizando componentes
+É importante notar que o `render()` do _RTL_ nos dá acesso à algumas funções como getByText, getByLabelText, getByTestId, entre outras. Mas há uma maneira mais clean de fazer essa as mesmas coisas. Essa maneira é usando o objeto `screen`. Refatorando o código acima, temos:
+
+```jsx
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
+
+describe('Quando realizo uma ação', () => {
+  it('que é do tipo incrementar, há um incremento', () => {
+    render(<App />);
+
+    // trazendo valor inicial pelo texto
+    const initialValue = screen.getBytext('10');
+    // trazendo ação pelo texto da label
+    const action = screen.getByLabelText('Incrementar');
+    // trazendo o botão pelo texto dele
+    const button = screen.getByText('Realizar ação');
+
+    // primeiro testamos se o valor inicial é realmente 10
+    expect(initialValue.textContent).toBe('10');
+
+    // agora simulamos os eventos utilizando a função fireEvent
+    fireEvent.click(action, { target: { value: 'incrementar' } });
+    // simulamos o clique no botão
+    fireEvent.click(button);
+
+    // testamos se o novo valor agora é 11
+    expect(initialValue.textContent).toBe('11');
+  });
+});
+```
+O próprio `screen` nos dá acesso as mesmas funções fornecidas pelo `render()`.
