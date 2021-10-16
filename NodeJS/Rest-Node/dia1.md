@@ -231,7 +231,7 @@ module.exports = app => {
   });
 }
 ```
-E lá no model Atendimentos ao invés de expressarmo o erro com `console.log()`, podemos chamar o res e expressar o erro como um `json`, além de passar para cada caso, tanto o de sucesso, quanto o de falha, um status da requisição:
+E lá no model Atendimentos ao invés de expressarmos o erro com `console.log()`, podemos chamar o res e expressar o erro como um `json`, além de passar para cada caso, tanto o de sucesso, quanto o de falha, um status da requisição:
 ```js
 const moment = require('moment');
 const conexao = require('../infra/conexao');
@@ -285,7 +285,7 @@ class Atendimentos {
     const existemErros = erros.length;
 
     if (existemErros) {
-      res.status(400).json(erros)
+      res.status(400).json(erros);
     } else {
       const sql = 'INSERT INTO Atendimentos SET ?';
       conexao.query(sql, atendimentoDatado, (err, resultados) => {
@@ -301,4 +301,249 @@ class Atendimentos {
 
 module.exports = new Atendimentos;
 ```
+## Outros verbos HTTP
+O verbo PUT é usado quando queremos alterar todo o objeto, o PATCH também altera, mas ele altera apenas algumas chaves do objeto.
+Abaixo segue um exemplo de como atualizar um atendimento utilizando o verbo PATCH:
+```js
+const moment = require('moment');
+const conexao = require('../infra/conexao');
 
+class Atendimentos {
+  adiciona(atendimento, res) {
+    const dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS');
+    const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+    const dataEhValida = moment(data).isSameOrAfter(dataCriacao);
+    const clienteEhValido = atendimento.cliente.length >= 5;
+    const atendimentoDatado = { ...atendimento, dataCriacao, data };
+
+    const validacoes = [
+      {
+        nome: 'data',
+        valido: dataEhValida,
+        mensagem: 'Data deve ser maior ou igual a data atual',
+      },
+      {
+        nome: 'cliente',
+        valido: clienteEhValido,
+        mensagem: 'Cliente deve ter pelo menos 5 caracteres',
+      },
+    ]
+
+    const erros = validacoes.filter((campo) => !campo.valido);
+    const existemErros = erros.length;
+
+    if (existemErros) {
+      res.status(400).json(erros);
+    } else {
+      const sql = 'INSERT INTO Atendimentos SET ?';
+      conexao.query(sql, atendimentoDatado, (err, resultados) => {
+        if (err) {
+          res.status(400).json(err);
+        } else {
+          res.status(201).json(resultados);
+        }
+      });
+    }
+  }
+
+  lista(res) {
+    const sql = 'SELECT * FROM Atendimentos';
+
+    conexao.query(sql, (err, resultados) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json(resultados);
+      }
+    });
+  }
+
+  buscaPorId(id, res) {
+    const sql = `SELECT * FROM Atendimentos WHERE id=${id}`;
+    conexao.query(sql, (err, resultado) => {
+      const atendimento = resultado[0];
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json(atendimento);
+      }
+    });
+  }
+  
+  // Método adicionado
+  altera(id, valores, res) {
+    if (valores.data) {
+      valores.data =  moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
+    }
+    const sql = 'UPDATE Atendimentos SET ? WHERE id=?'
+    conexao.query(sql, [valores, id], (err, resultados) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json(resultados);
+      }
+    });
+  }
+}
+
+module.exports = new Atendimentos;
+```
+Nesse caso, no model Atendimentos adicionamos esse método `altera` que recebe como parâmetro o id do atendimento que será alterado, os valores que serão alterados e a resposta que receberemos da API.
+Precisamos alterar também o controller e adicionar essa rota com o `patch()`:
+```js
+const Atendimentos = require('../models/atendimentos');
+
+module.exports = app => {
+  app.get('/atendimentos', (req, res) => {
+    Atendimentos.lista(res);
+  });
+
+  app.get('/atendimentos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    Atendimentos.buscaPorId(id, res);
+  });
+
+  app.post('/atendimentos', (req, res) => {
+    const atendimento = req.body;
+    Atendimentos.adiciona(atendimento, res);
+  });
+
+  app.patch('/atendimentos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const valores = req.body;
+
+    Atendimentos.altera(id, valores, res);
+  });
+};
+```
+Um outro verbo muito útil é o verbo DELETE que serve para deletar algo da API. Para isso, ainda naquele mesmo exemplo de um petshop precisamos ir em model Atendimentos e adicionar o método de deletar:
+```js
+const moment = require('moment');
+const conexao = require('../infra/conexao');
+
+class Atendimentos {
+  adiciona(atendimento, res) {
+    const dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS');
+    const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+    const dataEhValida = moment(data).isSameOrAfter(dataCriacao);
+    const clienteEhValido = atendimento.cliente.length >= 5;
+    const atendimentoDatado = { ...atendimento, dataCriacao, data };
+
+    const validacoes = [
+      {
+        nome: 'data',
+        valido: dataEhValida,
+        mensagem: 'Data deve ser maior ou igual a data atual',
+      },
+      {
+        nome: 'cliente',
+        valido: clienteEhValido,
+        mensagem: 'Cliente deve ter pelo menos 5 caracteres',
+      },
+    ]
+
+    const erros = validacoes.filter((campo) => !campo.valido);
+    const existemErros = erros.length;
+
+    if (existemErros) {
+      res.status(400).json(erros);
+    } else {
+      const sql = 'INSERT INTO Atendimentos SET ?';
+      conexao.query(sql, atendimentoDatado, (err) => {
+        if (err) {
+          res.status(400).json(err);
+        } else {
+          res.status(201).json(atendimento);
+        }
+      });
+    }
+  }
+
+  lista(res) {
+    const sql = 'SELECT * FROM Atendimentos';
+
+    conexao.query(sql, (err, resultados) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json(resultados);
+      }
+    });
+  }
+
+  buscaPorId(id, res) {
+    const sql = `SELECT * FROM Atendimentos WHERE id=${id}`;
+    conexao.query(sql, (err, resultado) => {
+      const atendimento = resultado[0];
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json(atendimento);
+      }
+    });
+  }
+
+  altera(id, valores, res) {
+    if (valores.data) {
+      valores.data =  moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
+    }
+    const sql = 'UPDATE Atendimentos SET ? WHERE id=?'
+    conexao.query(sql, [valores, id], (err, resultados) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json({
+          ...valores,
+          id,
+        });
+      }
+    });
+  }
+
+  deleta(id, res) {
+    const sql = 'DELETE FROM Atendimentos WHERE id=?';
+
+    conexao.query(sql, id, (err) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(200).json({ id });
+      }
+    });
+  }
+}
+
+module.exports = new Atendimentos;
+```
+E no controller adicionar essa rota relacionada ao DELETE:
+```js
+const Atendimentos = require('../models/atendimentos');
+
+module.exports = app => {
+  app.get('/atendimentos', (req, res) => {
+    Atendimentos.lista(res);
+  });
+
+  app.get('/atendimentos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    Atendimentos.buscaPorId(id, res);
+  });
+
+  app.post('/atendimentos', (req, res) => {
+    const atendimento = req.body;
+    Atendimentos.adiciona(atendimento, res);
+  });
+
+  app.patch('/atendimentos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const valores = req.body;
+
+    Atendimentos.altera(id, valores, res);
+  });
+
+  app.delete('/atendimentos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    Atendimentos.deleta(id, res);
+  });
+};
+```
