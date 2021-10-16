@@ -141,7 +141,7 @@ class Tabelas {
   };
 
   criarAtendimentos() {
-    const sql = 'CREATE TABLE Atendimentos (id int NOT NULL AUTO_INCREMENT,' + 
+    const sql = 'CREATE TABLE IF NOT EXISTS Atendimentos (id int NOT NULL AUTO_INCREMENT,' + 
       'cliente varchar(50) NOT NULL,' +
       'pet varchar(20), servico varchar(20) NOT NULL,' +
       'status varchar(20) NOT NULL, observacoes text, PRIMARY KEY(id))';
@@ -179,4 +179,41 @@ conexao.connect((err) => {
   }
 });
 ```
+## Persistindo os dados
+Uma vez criada a Tabela e iniciada quando nosso servidor está "indo pro ar", precisamos criar um modelo (`model`) que será responsável por fazer a conexão com o banco de dados e adicionar nossos dados lá. Para isso criamos um diretório `models` e dentro dele criamos um arquivo que será responsável por fazer essa conexão e cuidar das regras de negócio. Dentro desse arquivo fazemos a importação do nosso módulo de `conexao` lá da infra. Ainda no exemplo do do petshop, podemos pensar em uma classe de Atendimentos que terá um método que adiciona um atendimento na nossa tabela de atendimento lá no banco de dados:
+```js
+const conexao = require('../infra/conexao');
+
+class Atendimentos {
+  adiciona(atendimento) {
+    const sql = 'INSERT INTO Atendimentos SET ?';
+    conexao.query(sql, atendimento, (err, resultados) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(resultados);
+      }
+    });
+  }
+}
+
+module.exports = new Atendimentos;
+```
+No código acima temos um método `adiciona()` que recebe como parâmetro um atendimento. Temos também uma _query_ SQL que insere dentro de atendimentos alguma coisa, por isso o ponto de interrogação. Por fim utilizamos nossa conexão e chamamos a função `query()`, que recebe como parâmetro a _query_, o atendimento passado por parâmetro para o `adiciona(atendimento)`, e como último parâmetro uma callback contendo um erro e também um obejto `resultados` que serviram para verificar se a operação foi feita com sucesso. 
+
+Agora é preciso voltar para o controller, é ele quem é responsável por disparar essa requisição:
+```js
+const Atendimentos = require('../models/atendimentos');
+
+module.exports = app => {
+  app.get('/atendimentos', (req, res) => res.send('Você está na rota de atendimentos'));
+
+  app.post('/atendimentos', (req, res) => {
+    const atendimento = req.body;
+    Atendimentos.adiciona(atendimento);
+    res.send('Você está na rota de atendimantos e POST');
+  });
+}
+```
+Vemos que chamamos esse model, dentro da chamada do `.post`. 
 
