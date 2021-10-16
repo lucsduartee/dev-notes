@@ -129,3 +129,54 @@ conexao.connect((err) => {
 ```
 Essa callback recebe como parâmtro um erro. Caso o erro exista, ele será printado no console, caso não exista o servidor será "subido".
 
+## Criando tabelas no DB
+Para criar uma tabela, vamos dentro da nossa pasta onde criamos nosso arquivo `conexao.js` e criamos um script que cria essa tabela.
+Dentro de um arquivo `tabelas.js`, criamos uma classe contendo o método `init()` que recebe como parâmetro a nossa conexão. Dentro desse métido instanciamos essa conexão que foi recebida como parâmetro, e chamamos o método que fizemos para criar uma tebela. Imagine que queremos criar uma tabela de atendimentos para um Petshop:
+```js
+class Tabelas {
+  init(conexao) {
+    this.conexao = conexao;
+
+    this.criarAtendimentos();
+  };
+
+  criarAtendimentos() {
+    const sql = 'CREATE TABLE Atendimentos (id int NOT NULL AUTO_INCREMENT,' + 
+      'cliente varchar(50) NOT NULL,' +
+      'pet varchar(20), servico varchar(20) NOT NULL,' +
+      'status varchar(20) NOT NULL, observacoes text, PRIMARY KEY(id))';
+
+    this.conexao.query(sql, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Tabela Atendimentos criada');
+      }
+    });
+  }
+};
+
+module.exports = new Tabelas;
+```
+O método `criarAtendimentos()` possui um _query_ que cria uma tabela e adiciona à ela alguns campos.
+Depois disso, trazemos o atributo `conexao` juntamente com a função `query()` que recebe como parâmtro a _query_ que criamos e um erro para verificarmos se a tabela foi criada com sucesso.
+
+Dentro do nosso arquivo `index.js` importamos essa classe criada já instanciada e dentro do `else`, antes de inicializarmos o servidor, inicializamos por meio do `init()` a criação da nossa tabela.
+```js
+const customExpress = require('./config/customExpress');
+const conexao = require('./infra/conexao');
+const Tabelas = require('./infra/tabelas')
+
+conexao.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('conectado');
+
+    Tabelas.init(conexao);
+    const app = customExpress();
+    app.listen(3000, () => console.log('server in port 3000'));
+  }
+});
+```
+
