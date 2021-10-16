@@ -217,3 +217,40 @@ module.exports = app => {
 ```
 Vemos que chamamos esse model, dentro da chamada do `.post`. 
 
+## Lidando com status HTTP
+É muito importante deixar claro para quem está fazendo a requisição para a API qual é o status da requisição. E podemos passar isso para ele! Sabemos que quem controla o tráfego de req e res é o `controller`, certo?! Ainda nesse caso de um suposto petshop podemos refatorar nossa chamada do model dentro do `app.post()` e passar como parâmetro o res para o nosso model Atendimentos:
+```js
+const Atendimentos = require('../models/atendimentos');
+
+module.exports = app => {
+  app.get('/atendimentos', (req, res) => res.send('Você está na rota de atendimentos'));
+
+  app.post('/atendimentos', (req, res) => {
+    const atendimento = req.body;
+    Atendimentos.adiciona(atendimento, res);
+  });
+}
+```
+E lá no model Atendimentos ao invés de expressarmo o erro com `console.log()`, podemos chamar o res e expressar o erro como um `json`, além de passar para cada caso, tanto o de sucesso, quanto o de falha, um status da requisição:
+```js
+const moment = require('moment');
+const conexao = require('../infra/conexao');
+
+class Atendimentos {
+  adiciona(atendimento, res) {
+    const dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS');
+    const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+    const atendimentoDatado = { ...atendimento, dataCriacao, data };
+    const sql = 'INSERT INTO Atendimentos SET ?';
+    conexao.query(sql, atendimentoDatado, (err, resultados) => {
+      if (err) {
+        res.status(400).json(err);
+      } else {
+        res.status(201).json(resultados);
+      }
+    });
+  }
+}
+
+module.exports = new Atendimentos;
+```
