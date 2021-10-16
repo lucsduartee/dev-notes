@@ -93,3 +93,39 @@ module.exports = () => {
 ## Criando um DataBase com MySQl
 Primeiro precisamos instalar o MySQl server no Linux com o comando
 `sudo apt install mysql-server` e depois de instalado podemos verificar a instalação com `mysql --version`. Depois de instalado podemos adicionar ao MySQL uma senha de usuário root, com o comando `sudo mysql_secure_installation`. Para verificar se o servidor está rodando no nosso pc, utilizamos o comando `sudo systemctl status mysql` e para iniciá-lo `sudo systemctl start mysql` e para parar `sudo systemctl stop mysql`
+
+## Conectando o código com o DataBase
+Dentro do nosso projeto criamos um diretório que vai conter nosso arquvo de conexão. Esse arquivo deve conter o seguinte código:
+```js
+const mysql = require('mysql');
+
+const conexao = mysql.createConnection({
+  host: 'localhost',
+  port: 3307,
+  user: 'root',
+  password: 'senha-do-db',
+  database: 'nome-do-db',
+});
+
+module.exports = conexao;
+```
+Estamos importando o módulo de `mysql` e estamos criando uma conexão com a função `createConnection()` que receb como parâmetro um objeto contendo informações sobre o _database_ na qual estamos nos conectando.
+
+Uma vez feito isso, dentro do nosso arquivo de entrypoint, importamos a conexão que acabamos de criar e conectamos nosso servidor ao banco de dados utilizando a função `connect()` que pode receber como parâmetro uma callback:
+
+```js
+const customExpress = require('./config/customExpress');
+const conexao = require('./infra/conexao');
+
+conexao.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('conectado');
+    const app = customExpress();
+    app.listen(3000, () => console.log('server in port 3000'));
+  }
+});
+```
+Essa callback recebe como parâmtro um erro. Caso o erro exista, ele será printado no console, caso não exista o servidor será "subido".
+
