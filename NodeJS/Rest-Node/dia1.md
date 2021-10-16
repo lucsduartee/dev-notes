@@ -254,3 +254,51 @@ class Atendimentos {
 
 module.exports = new Atendimentos;
 ```
+## Validando dados, regras de negócio
+Podemos adicionar regras de negócio na nossa API, e fazemos isso dentro do model `Atendimentos`. Veja e seguinte lógica, é bem intuitivo. Você vai entender:
+```js
+const moment = require('moment');
+const conexao = require('../infra/conexao');
+
+class Atendimentos {
+  adiciona(atendimento, res) {
+    const dataCriacao = moment().format('YYYY-MM-DD HH:MM:SS');
+    const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS');
+    const dataEhValida = moment(data).isSameOrAfter(dataCriacao);
+    const clienteEhValido = atendimento.cliente.length >= 5;
+    const atendimentoDatado = { ...atendimento, dataCriacao, data };
+
+    const validacoes = [
+      {
+        nome: 'data',
+        valido: dataEhValida,
+        mensagem: 'Data deve ser maior ou igual a data atual',
+      },
+      {
+        nome: 'cliente',
+        valido: clienteEhValido,
+        mensagem: 'Cliente deve ter pelo menos 5 caracteres',
+      },
+    ]
+
+    const erros = validacoes.filter((campo) => !campo.valido);
+    const existemErros = erros.length;
+
+    if (existemErros) {
+      res.status(400).json(erros)
+    } else {
+      const sql = 'INSERT INTO Atendimentos SET ?';
+      conexao.query(sql, atendimentoDatado, (err, resultados) => {
+        if (err) {
+          res.status(400).json(err);
+        } else {
+          res.status(201).json(resultados);
+        }
+      });
+    }
+  }
+}
+
+module.exports = new Atendimentos;
+```
+
