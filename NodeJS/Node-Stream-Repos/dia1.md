@@ -26,3 +26,9 @@ fs.createReadStream('./path/to/file')
   .on('finish', () => /* implementation */);
 ```
 O `pipe()` auxília na conversão de um _stream_ de leitura para uma _stream_ de escrita, ele recebe como parâmetro o `fs.createWriteStream()`. Como nesse caso não temos como chamar uma callback para ser executada, concatenamos ainda no comando, o método `on()` que é relativo à ao disparo de um evento. No código acima, temos o evento de _finish_. E como segundo parâmetro passamos uma callback que será executada quando o `stream` for concluído.
+
+## Event Loop
+
+A engine do Node (V8) é single Thread, ou seja, executa apenas uma tarefa por vez. Mas é possível trabalhar e lidar com fluxos de código assíncronamente. Segue abaixo um esquema de como funciona esse fluxo de informação no Javascript.
+
+![Event Loop](../../assets/eventloop.png)
