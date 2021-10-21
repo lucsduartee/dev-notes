@@ -32,3 +32,16 @@ O `pipe()` auxília na conversão de um _stream_ de leitura para uma _stream_ de
 A engine do Node (V8) é single Thread, ou seja, executa apenas uma tarefa por vez. Mas é possível trabalhar e lidar com fluxos de código assíncronamente. Segue abaixo um esquema de como funciona esse fluxo de informação no Javascript.
 
 ![Event Loop](../../assets/eventloop.png)
+
+## Utilizando o axios para consumnir API
+
+Utilizar o comando `npm install -- save axios`.
+```js
+const response = await axios.get(url);
+```
+
+## Responsabilidades dentro do MVC
+- Controller: Falar para onde devemos enviar os dados e informações. Responder a View, intermediário entre quem manda e recebe as informações.
+No controller também é feita validações de segurança.
+- Model: Camada de regras de negócios, tratamento de erros.
+- Repositórios: É a camada de dados independente das origens desses dados.
