@@ -61,3 +61,17 @@ name = gets
 puts ("Hello: " + name)
 ```
 Tem que usar a função `gets` ou `gets.chomp()` para não pular uma linha. O `gets` capta até o enter e interpreta como um `\n`.
+
+## Arrays
+
+Para criar um array em Ruby fazemos da seguinte forma:
+```rb
+friends = Array["alguem", "alguem2", "alguem3"]
+```
+Você pode colocar diversos tipos de dados dentro de um array também, não necessariamente o array precisa ser todo do mesmo tipo.
+Se eu quiser apenas declarar um Array:
+```rb
+friends = Array.new
+```
+
+## Hashes
