@@ -75,3 +75,87 @@ friends = Array.new
 ```
 
 ## Hashes
+
+As hashes são como se fosse objetos ou dicionários.
+```rb
+states = {
+  "Pennsylvania" => "PA",
+  "New York" => "NY",
+  "Oregon" => "OR",
+}
+```
+Para acessar os valores usamos a seguinte notação: `state["Oregon"]`, dessa forma eu terei como retorno o valor `"OR"`.
+Posso declarar a hashe da seguinte forma também:
+```rb
+states = {
+  :Pennsylvania => "PA",
+  "New York" => "NY",
+  :Oregon => "OR",
+  1 => "one",
+}
+```
+
+## Methods em Ruby (funções)
+
+Para definir um método em Ruby:
+
+```rb
+def sayhi
+  puts "Hello World"
+end
+
+sayhi # Aqui está sendo executada a função
+```
+Agora uma função com parâmetro:
+```rb
+def sayhi(name)
+  puts ("Hello " + name)
+end
+
+sayhi("Mike") # Aqui está sendo executada a função
+```
+Passando default values para as funções:
+```rb
+def sayhi(name="fulano", age=-2)
+  puts ("Hello " + name + " and " + age.to_s + " years old")
+end
+
+sayhi("Mike") # Aqui está sendo executada a função
+```
+Métodos com retorno:
+```rb
+def cube(num)
+  return num * num * num
+end
+
+cube(3) # Aqui está sendo executada a função
+```
+Ou ainda:
+```rb
+def cube(num)
+  return num * num * num
+end
+
+cube(3) # Aqui está sendo executada a função
+```
+Funções podem retornar mais de uma coisa, para acessar os resultados usamos a notação parecida como se fossemos acessar um array:
+```rb
+def cube(num)
+  return num * num * num, num
+end
+
+cube(3)[1] # retorno será 3
+```
+
+## If Statements
+Operadores lógicos em Ruby são escritos literalmente: `and`, `or` e negação `!`
+
+```rb
+if condition
+  # excuta algo
+elsif condition2
+  # executa outra algo
+else
+  # executa excessão
+end
+```
