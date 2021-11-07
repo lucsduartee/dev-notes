@@ -437,3 +437,33 @@ italian_chef.make_chicken # "The chef makes chicken"
 ```
 Se na classe `ItalianChef` eu tiver um método com o mesmo nome de método da classe que ele herdou,
 então a implementação da Classe filha vai sobrescrever a implementação da classe herdada.
+
+## Módulos
+São agrupamento de métodos
+
+```rb
+# useful_tools.rb
+module Tools
+  def sayhi(name)
+    puts "Hello #{name}"
+  end
+
+  def saybye(name)
+    puts "Bye #{name}"
+  end
+end
+
+include Tools
+
+Tools.sayhi("alfred") # "Hello alfred"
+Tools.saybye("alfred") # "Bye alfred"
+
+# giraffe.rb
+require_relative "useful_tools.rb"
+include Tools
+
+Tools.sayhi("alfred") # "Hello alfred"
+Tools.saybye("alfred") # "Bye alfred"
+```
+Podemos usar as funções de um determinado módulo, tanto dentro do arquivo de módulo
+quanto fora desse arquivo. A única diferença do primeiro para o segundo caso é que no segundo caso eu preciso primeiramente importar o módulo de um determinado arquivo utilizando o `require_relative`.
