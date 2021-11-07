@@ -185,7 +185,7 @@ Aqui o `case` faz o papel do `switch` e o `when` faz o papel do `case`, e o else
 
 ## Loops
 
-Famigerados loops
+Famigerados loops. Primeiramento com o `while`
 
 ```rb
 index = 1
@@ -193,4 +193,55 @@ while index <= 5
   puts index
   index += 1
 end
+```
+Agora loops com `for`
+
+```rb
+dogs = ["Nina", "Mabel", "Fred", "Lion"]
+
+for dog in dogs
+  puts dog
+end
+```
+Ou da seguinte maneira, parecida muito com o `.forEach` do **Javascript**:
+```rb
+dogs = ["Nina", "Mabel", "Fred", "Lion"]
+dogs.each do |dog|
+  puts god
+end
+```
+Também podemos fazer o loop especificando um range, por exemplo, de 0 até 5:
+
+```rb
+for index in 0..5
+  puts index
+end
+```
+Ou ainda:
+
+```rb
+6.times do |index|
+  puts index
+end
+```
+
+## Comentários
+
+Para comentar em Ruby podemos fazer de duas maneiras.
+Quando queremos comentar apenas uma linha:
+
+```rb
+# aqui está um comentário
+puts "alloo"
+```
+Ou se quisermos comentar em várias linhas:
+
+```rb
+=begin
+bloco
+de
+comentários
+=end
+
+puts "alloo"
 ```
