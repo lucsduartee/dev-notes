@@ -408,3 +408,32 @@ student2 = Student.new("Pam", "Art", 3.6)
 puts student1.has_honors # false
 puts student2.has_honors # true
 ```
+
+## Herança
+
+Mesmo conceito do Javascript
+
+```rb
+class Chef
+  def make_chicken
+    puts "The chef makes chicken"
+  end
+  def make_salad
+    puts "The chef makes salad"
+  end
+  def make_special_dish
+    puts "The chef makes bbq ribs"
+  end
+end
+
+class ItalianChef < Chef # ItalianChef herda todos os métodos de Chef
+
+end
+
+chef = Chef.new()
+chef.make_chicken # "The chef makes chicken"
+italian_chef = ItalianChef.new()
+italian_chef.make_chicken # "The chef makes chicken"
+```
+Se na classe `ItalianChef` eu tiver um método com o mesmo nome de método da classe que ele herdou,
+então a implementação da Classe filha vai sobrescrever a implementação da classe herdada.
