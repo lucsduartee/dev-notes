@@ -309,3 +309,77 @@ File.open("path/to/file", "w") do |file|
 end
 ```
 Ao invés de utilizar o `a` utilizamos o `w`. Esse método também cria um arquivo.
+
+## Erros em Ruby
+Para tratar erros no Ruby podemos utilizar a estrutura abaixo, no exemplo trataremos um erro de divisão por 0:
+```rb
+begin
+  num = 10 / 0
+rescue
+  puts "Division by zero error"
+end
+```
+E se tivermos mais de um erro no programa?
+```rb
+lucky_gems = [4, 5, 6, 7]
+
+begin
+  lucky_gems["dog"] # TypeError
+  num = 10 / 0 # ZeroDivisionError
+rescue ZeroDivisionError
+  puts "Division by zero error"
+rescue TypeError
+  puts "Wrong Type"
+end
+```
+Podemos também capturar o erro de guardá-lo em um variável:
+
+```rb
+lucky_gems = [4, 5, 6, 7]
+
+begin
+  lucky_gems["dog"] # TypeError
+  num = 10 / 0 # ZeroDivisionError
+rescue ZeroDivisionError
+  puts "Division by zero error"
+rescue TypeError => e
+  puts e
+end
+```
+
+## Classes e Objetos
+
+Para criar uma classe em Ruby:
+
+```rb
+class Book
+  attr_accessor :title, :author, :pages
+end
+
+book1 = Book.new()
+book1.title = "Harry Potter"
+book1.author = "JK Rowling"
+book1.pages = 400
+
+puts book1.title # Harry Potter
+```
+Nesse bloco de código estamos criando uma Classe `Book` que possui 3 atributos que são definidos
+por meio do `attr_accessor`. Logo embaixo estamos criando uma instãncia dessa classe e atribuindo vaalores para cada atributo.
+
+Podemos facilitar a criação de instâncias quando utilizamos um método de inicialização:
+
+```rb
+class Book
+  attr_accessor :title, :author, :pages
+
+  def initialize(title, author, pages)
+    @title = title
+    @author = author 
+    @pages = pages
+  end
+
+end
+
+book1 = Book.new("Harry Potter", "JK Rowling", 400)
+book2 = Book.new("Lord of the Rings", "Tolkien", 500)
+```
