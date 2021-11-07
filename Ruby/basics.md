@@ -159,3 +159,38 @@ else
   # executa excessão
 end
 ```
+
+## Case Expressions
+
+É o famoso `switch case` 
+```rb
+def get_day_name(day)
+  day_name = ""
+
+  case day
+  when "mon"
+    day_name = "Monday"
+  when "tue"
+    day_name = "Tuesday"
+  when "wed"
+    day_name = "Wednesday"
+  else
+    day_name = "Invalid abv"
+  end
+
+  return day_name
+end
+```
+Aqui o `case` faz o papel do `switch` e o `when` faz o papel do `case`, e o else faz o papel do `default`.
+
+## Loops
+
+Famigerados loops
+
+```rb
+index = 1
+while index <= 5
+  puts index
+  index += 1
+end
+```
