@@ -245,3 +245,67 @@ comentários
 
 puts "alloo"
 ```
+## Lidando com arquivos
+
+### Lendo arquivos
+Para ler um arquivo em **Ruby** utilizamos a classe `File` com o método `open` para abrir um arquivo.
+Dentro desse método passamos como primeiro parâmetro o caminho relativo para o arquivo, e como segundo parâmetro,
+passamos modo que gostaríams de abrir esse arquivo, nesse caso, `r` de leitura. Utilizamos o comando `do` juntamente
+com a definição da variável `|file|`. Se printarmos a `file` veremos o endereçamento de memória. Para realmente ver o que está no arquivo
+precisamos utilizar o método `read()`:
+
+```rb
+File.open("path/to/file", "r") do |file|
+  puts file # endereço de memória
+  puts file.read() # conteúdo do arquivo em si
+end
+```
+O `file.read()` nos retornar uma string, então podemos utlizar todos os métodos relativos à string depois do `file.read()`.
+Há outros métodos que podemos utilizar como:
+- `FILE.readline()`: lê a linha do arquivo
+- `FILE.readchar()`: lê um caracter do arquivo
+- `FILE.readlines()`: lê todas as linhas do arquivo, se comporta como se fosse um array de linhas
+
+Uma outra meneira de abrir um arquivo em modo de leitura com Ruby, é da seguinte maneira. Mas desse modo
+não podemos esquecer de fechar o arquivo!
+
+```rb
+file = File.open("path/to/file", "r")
+
+puts file.read
+
+file.close()
+```
+
+### Escrevendo arquivos
+
+Para abrir já sabemos, mas agora temos que abrir em modo de escrita (append):
+
+```rb
+File.open("path/to/file", "a") do |file|
+  file.write("\ntexto para 'apendar' no arquivo")
+end
+```
+Abaixo se encontra os modos de abertura de arquivos em Ruby:
+
+Mode |  Meaning
+-----|--------------------------------------------------------
+"r"  |  Read-only, starts at beginning of file  (default mode).
+"r+" |  Read-write, starts at beginning of file.
+"w"  |  Write-only, truncates existing file to zero length or creates a new file for writing.
+"w+" |  Read-write, truncates existing file to zero length or creates a new file for reading and writing.
+"a"  |  Write-only, starts at end of file if file exists, otherwise creates a new file for writing.
+"a+" |  Read-write, starts at end of file if file exists, otherwise creates a new file for reading and writing.
+"b"  |  Binary file mode (may appear with any of the key letters listed above). Suppresses EOL <-> CRLF conversion on Windows. And sets external encoding to ASCII-8BIT unless explicitly specified.
+"t"  |  Text file mode (may appear with any of the key letters listed above except "b").
+
+_Fonte_: [What are the Ruby File.open modes and options?](https://stackoverflow.com/questions/3682359/what-are-the-ruby-file-open-modes-and-options)
+
+Agora se quisermos sobrescrever o conteúdo do arquivo, fazemos da seguinte maneira:
+
+```rb
+File.open("path/to/file", "w") do |file|
+  file.write("\ntexto para escrever no arquivo")
+end
+```
+Ao invés de utilizar o `a` utilizamos o `w`. Esse método também cria um arquivo.

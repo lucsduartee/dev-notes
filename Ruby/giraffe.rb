@@ -1,3 +1,3 @@
-puts "Enter yout name: "
-name = gets
-puts ("Hello: " + name)
+File.open("employees.txt", "r") do |file|
+  puts file.read()
+end
