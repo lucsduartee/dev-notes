@@ -61,3 +61,28 @@ CONSTANTE = 1
     end
   ```
 - Ternário: `a = condition ? retorno1 : retorno2`
+
+## Tratamento de Strings
+
+- Concatenação: Há diversas maneiras de concatenar strings em Ruby, as mais utilizadas são:
+  ```rb
+  "o valor da variável é: #{value}", "+", String.concat('alguma_coisa')
+  ```
+- Substring: Pega um pedaço da string original:
+  ```rb
+  a = 'Lucas'
+  a[1,2] # => 'uc'
+  ```
+- Replace:
+  ```rb
+  'Lucas'.gsub('L', 'u') # => 'uucas'
+  ```
+- Capitalize: Torna a primeira letra maiúscula
+  ```rb
+  'lucas'.capitalize # => 'Lucas'
+  ```
+- Center: Coloca uma quantidade x de espaços antes e depois de uma string:
+  ```rb
+  'Lucas'.center(3) # => '   Lucas   '
+  ```
+- Delete: Deleta
