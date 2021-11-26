@@ -92,3 +92,64 @@ EXPOSE 3000
 - docker container rm -f <ids || names> # Caso o container esteja ativo
 - docker container prune # Remove todos os containers inativos
 ```
+
+## Mapeando (persistindo) dados de um container
+
+Para fazer isso, precisamos mapear os dados da seguinte maneira:
+`docker container run -v /opt/datadir:/var/lib/mysql mysql`. Assim, tudo que eu fizer dentro do container `mysql` será salvo no  `/opt/datadir`.
+
+## Inspecionando um `container`:
+```
+docker container inspect <nome-do-container>
+```
+
+## Interligando portas de acesso do nosso localhost à porta do container
+```
+docker container run -p <porta-localhost>:<porta-container> <imagem>:<tag>
+# exemplo: docker container run -p 8080:80 ubuntu
+```
+Dessa maneira o usuário consegue acessar o container por meio do `localhost/8080 ou http://192.168.1.5/8080`.
+
+## Dockerfile
+É um arquivo de texto escrito de maneira que o Docker consiga entender. Ele possui basicamente a estrutura de `<INSTRUÇÃO> : <argumento>`.
+Um exemplo de um _dockerfile_:
+
+```dockerfile
+FROM Ubuntu
+
+RUN apt-get update
+RUN apt-get install python
+
+RUN pip install flask
+RUN pip install flask-mysql
+
+COPY . /opt/source-code
+
+ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+```
+Para _buildar_ o __dockerfile__ e criarmos a imagem, utilizamos o seguinte comando:
+`docker build Dockerfile -t <path/to/dockerfile>`
+
+## Adicionando comandos quando um OS for `runned`
+No arquivo _Dockerfile_ adicione a instrução `CMD`:
+
+```Dockerfile
+FROM Ubuntu
+
+CMD sleep 5 # ou ainda CMD ["sleep", "5"]
+```
+Dessa maneira sempre que um container for iniciado, ele "dormirá" por 5 segundo.
+Mas e se eu quiser fazer o container "dormir" por 10 segundos?
+O que poss fazer é, ao invés de usar `CMD` eu uso `ENTRYPOINT`:
+```Dockerfile
+FROM Ubuntu
+
+ENTRYPOINT ["sleep"]
+```
+Então no momento em que eu "runnar" o container eu passo o tempo que eu quero que ele durma: `docker container run ubuntu 10`. Podemos ainda deixar um parâmetro default caso não seja passado nenhum tempo:
+```Dockerfile
+FROM Ubuntu
+
+ENTRYPOINT ["sleep"]
+CMD ["5"] # parametro default
+```
