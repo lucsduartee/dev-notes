@@ -84,6 +84,7 @@ EXPOSE 3000
 - Retomando a um container iniciado com `-dit`
 ```
 - docker container attach <ids || names>
+- docker start -ai <id || name> # retomar um container em modo interativo
 ```
 
 - Removendo um `container`:
@@ -129,6 +130,46 @@ ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
 ```
 Para _buildar_ o __dockerfile__ e criarmos a imagem, utilizamos o seguinte comando:
 `docker build Dockerfile -t <path/to/dockerfile>`
+### Criando uma aplicação React com _Dockerfile_
+Primeiro precisamos criar uma aplicação _React_/ da maneira tradicional já conhecida: `npx create-react-app react-docker && cd react-docker`. E dentro da pastar raíz criar um arquivo `Dockerfile`:
+
+```Dockerfile
+FROM node:14-alpine AS build # o AS indica um _alias_
+
+WORKDIR /app # diretório base para a execução de comandos
+
+COPY package*.json ./ # estou copiando para `./` o código fonte que tenho no path `package*.json`
+
+RUN npm install
+
+COPY . . 
+
+RUN npm run build
+```
+Algumas obervações:
+```Dockerfile
+  # entendendo o COPY
+  COPY ["./app", "/usr/src/app"] # estou copiando para `/usr/src/app` o código fonte que tenho no path `./app`
+
+  # Criar um arquivo .dockerignore e adicionar a node_modules
+```
+
+Essa seria a primeira etapa do processo. Agora faremos o que pode ser chamado de `multi-stage build`, que é a divisão do script do _Dockerfile_ em mais de uma parte. Agora faremos a definição dentro do _Dockerfile_ os comandos do ambiente de produção, onde utilizaremos um servidor __HTTP NGINX__. Voltando ao nosso arquivo:
+
+```Dockerfile
+FROM node:14-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx:1.16.0-alpine AS prod
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80 # o Nginx usa a porta 80 para executar as aplicações, então, podemos expor esta porta no nosso Dockerfile
+
+```
+
 
 ## Adicionando comandos quando um OS for `runned`
 No arquivo _Dockerfile_ adicione a instrução `CMD`:
@@ -170,3 +211,7 @@ docker network create \
 ![Docker None](../assets/dockernone.png)
 - host: `docker run ubuntu --network=host`
 ![Docker Host](../assets/dockerhost.png)
+- Container para um servidor __HTTP Apache__: `docker run -d -P httpd:2.4`
+
+## Imagens
+Para fazer download de uma imagem do _Docker_ basta utilizar o comando `docker pull <imagem>:<tag>`. Cada download que aparece no processo representa uma camada, representanda por um hash. O download é feito em camadas para que outras imagens possam usar essas camadas, sem a necessidade de serem baixadas novamente. Formalmente essas camadas são chamdas de _Layered File System_.
