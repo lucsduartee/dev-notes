@@ -153,3 +153,20 @@ FROM Ubuntu
 ENTRYPOINT ["sleep"]
 CMD ["5"] # parametro default
 ```
+
+## Network no _Docker_
+Para listar as redes do docker: `docker network ls`.
+Quando criamos um container, o _Docker_ automaticamente cria 3 networks:
+- Bridge: `docker run ubuntu` (_default_): é uma rede interna que pode ser usada para se comunicar com outras aplicações.
+![Docker Bridge](../assets/dockerbridge.png)
+Podemos ainda criar uma segunda rede para conectar aplicações, com o seguinte comando:
+```
+docker network create \
+  --driver bridge \
+  --subnet 182.18.0/16
+  custom-isolated-network
+```
+- none: `docker run ubuntu --network=none`
+![Docker None](../assets/dockernone.png)
+- host: `docker run ubuntu --network=host`
+![Docker Host](../assets/dockerhost.png)
