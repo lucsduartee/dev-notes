@@ -94,6 +94,11 @@ EXPOSE 3000
 - docker container prune # Remove todos os containers inativos
 ```
 
+- Executando um container sem interromper o processo dele mas abrindo um bash:
+```
+docker exec -it <id-container> bash
+```
+
 ## Mapeando (persistindo) dados de um container
 
 Para fazer isso, precisamos mapear os dados da seguinte maneira:
@@ -129,7 +134,37 @@ COPY . /opt/source-code
 ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
 ```
 Para _buildar_ o __dockerfile__ e criarmos a imagem, utilizamos o seguinte comando:
-`docker build Dockerfile -t <path/to/dockerfile>`
+`docker build Dockerfile -t <nome-da-imagem>`
+ou ainda `docker image build -t <name:tag> <origem_docker_file>`
+
+### Alguns outros comandos dos Dockerfile
+```Dockerfile
+LABEL <key>=<value>
+# serve para ser como se fosse o rótulo
+# é comum ser usado para deixar um contato do mantenedor da imagem:
+LABEL maintener="alguemae@exemplo.com"
+
+#------------------------------------------------------------------
+
+ENV <ENV NAME> <ENV VALUE>
+# é possível adicionar variáveis de ambiente
+# por exemplo, para setar o ambiente onde vamos rodar o app
+ENV NODE_ENV production
+# ao rodar um container podemos também passar variáveis de embiente:
+docker container run \
+  --env myCat=fred \
+  --env myDog=nina \
+  <image-name>:<tag>
+
+#------------------------------------------------------------------
+
+USER <NOME_DO_USER>
+# é possível adicionar nome ao usuário que for acessar a nossa palicação
+# por padrão o usuário que vem no ubuntu, por exemplo, é o root
+# mas podemos configurar isso:
+USER alguem
+```
+
 ### Criando uma aplicação React com _Dockerfile_
 Primeiro precisamos criar uma aplicação _React_/ da maneira tradicional já conhecida: `npx create-react-app react-docker && cd react-docker`. E dentro da pastar raíz criar um arquivo `Dockerfile`:
 
@@ -146,6 +181,7 @@ COPY . .
 
 RUN npm run build
 ```
+
 Algumas obervações:
 ```Dockerfile
   # entendendo o COPY
@@ -167,6 +203,7 @@ RUN npm run build
 FROM nginx:1.16.0-alpine AS prod
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80 # o Nginx usa a porta 80 para executar as aplicações, então, podemos expor esta porta no nosso Dockerfile
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 ```
 
