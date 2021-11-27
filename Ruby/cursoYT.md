@@ -198,3 +198,28 @@ Eles são como os objetos em JS, podem ser declarados de maneiras diferentes. Ve
     puts e[:chave]
   ```
 
+## Funções
+Válido lembrar que funções em Ruby possuem retorno automático
+  ```rb
+  # Sem parâmetros.
+  def function_name
+    # implemantation
+  end
+
+  # Com parâmetros
+  def function_name(param)
+    # implementation using param
+  end
+  function_name(algo) || function_name algo
+
+  # Com parâmetro default
+  def function_name(param=default_value)
+    # implementation using param
+  end
+  function_name(algo) || function_name algo
+
+  # Rest Params: define um array sem quantidade definida de parametros
+  def function_name(*args)
+
+  end
+  ```
