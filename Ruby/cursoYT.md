@@ -2,7 +2,7 @@
 
 - Variáveis simples:
 ```rb 
-  a = 1 
+a = 1 
 ```
 - Instância: Variável de escopo da classe
 ```rb
