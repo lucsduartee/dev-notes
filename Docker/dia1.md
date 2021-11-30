@@ -248,7 +248,187 @@ docker network create \
 ![Docker None](../assets/dockernone.png)
 - host: `docker run ubuntu --network=host`
 ![Docker Host](../assets/dockerhost.png)
+- Criar uma rede: `docker network create --driver bridge <nome-da-rede>`
+- Colocar um container à uma rede: `docker network connect <nome-da-rede> <nome-do-container>`
+- Atribuição da rede no momento da criação do container: `docker container run -itd --name <nome-do-container> --network <nome-da-rede> <imagem>` 
 - Container para um servidor __HTTP Apache__: `docker run -d -P httpd:2.4`
+- Desconectar um container da rede: `docker network disconnect <nome-rede> <nome-container>`
+
 
 ## Imagens
 Para fazer download de uma imagem do _Docker_ basta utilizar o comando `docker pull <imagem>:<tag>`. Cada download que aparece no processo representa uma camada, representanda por um hash. O download é feito em camadas para que outras imagens possam usar essas camadas, sem a necessidade de serem baixadas novamente. Formalmente essas camadas são chamdas de _Layered File System_.
+
+## Container com volume
+Para associar um diretório do próprio computador para um container no Docker, utilizamos o seguinte comando: `docker container run -p <bind-de-portas> -v /path/na/maquina:/path/no/container <nome-imagem>`.
+
+## Docker Compose
+O arquivo _Docker Compose_ é onde conseguimos especificar todos os parâmetros que antes rodávamos unitariamente utilizando `docker container run`, alpem de podermos tambpem criar os demais objetos utilizados por eles, como redes e volumes. A configuração do _Docker Compose_ é feita por meio de uma arquivo _YAML_, geralmente com o
+nome `docker-compose.yaml`. Ele tem a seguinte cara:
+```yaml
+version: "<VERSÃO-DO-COMPOSE>"
+services: # Definiçaõ dos containers
+  <MEU-CONTAINER-1>:
+    image: <MINHA-IMAGEM>
+    # ... outras configs
+  <MEU-CONTAINER-2>:
+    build: <PATH_TO_DOCKERFILE>
+    # ... outras configs
+  <MEU-CONTAINER-3>:
+    image: <MINHA-IMAGEM>
+    # ... outras configs
+```
+Agora analizando cada chave especificamente:
+- **version**: todo arquivo `docker-compose` precisa começar com a tag _version_. Ele mostra qual a versão do `docker-compose` vamos utilizar, por exemplo: `version: '3'`.
+- **services**: Indicam o tipo de container que vamos rodar. Por exemplo, podemos dizer os `services` de um `docker-compose` são:
+```yaml
+version: '3'
+services:
+  frontend:
+
+  backend:
+
+  database:
+```
+Dentro de cada service podemos acrescentar uma lista de instruções que serão feitas, podemos por exemplo coloca uma imagem associada a cada um dos serviços:
+```yaml
+version: '3'
+services:
+  frontend:
+    image: mjgargani/compose-example:frontend-trybe1.0
+  backend:
+    image: mjgargani/compose-example:backend-trybe1.0
+  database:
+    image: mjgargani/compose-example:database-trybe1.0
+```
+No _Docker_ também existe uma tag de reinicialização que serve para reiniciar o container caso haja alguma ação específica
+- **restart**: pode receber quatro parãmetros:
+  - no - Este é o valor padrão assumido pelo Docker e define que o container não irá restartar automaticamente;
+  - on-failure - Define que o container será reiniciado caso ocorra alguma falha, apontado pelo exit code diferente de zero;
+  - aways - Especifica que sempre que o serviço parar, seja por um falha ou porque ele finalizou sua execução, ele irá ser reiniciado.
+  - unless-stopped - Define que o container sempre seja reiniciado, a menos que a menos que o Docker em si seja parado (manualmente ou não). No caso de ser interrompido, ele não reinicia nem depois que o daemon do Docker * seja reiniciado.
+
+Exemplo de uso:
+```yaml
+version: '3'
+services:
+  frontend:
+    image: mjgargani/compose-example:frontend-trybe1.0
+    restart: always
+  backend:
+    image: mjgargani/compose-example:backend-trybe1.0
+    restart: always
+  database:
+    image: mjgargani/compose-example:database-trybe1.0
+    restart: always
+```
+- **ports**: serve para mapear portas de rede:
+```yaml
+version: '3'
+services:
+  frontend:
+    image: mjgargani/compose-example:frontend-trybe1.0
+    restart: always
+    ports:
+      - 3000:3000
+  backend:
+    image: mjgargani/compose-example:backend-trybe1.0
+    restart: always
+    ports:
+      - 3001:3001
+  database:
+    image: mjgargani/compose-example:database-trybe1.0
+    restart: always
+```
+- **depends on**: é uma maneira de criar interdependência entre os containers:
+```yaml
+version: "3.8"
+services:
+  frontend:
+    image: mjgargani/compose-example:frontend-trybe1.0
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - "backend"
+  backend:
+    image: mjgargani/compose-example:backend-trybe1.0
+    restart: always
+    ports:
+      - 3001:3001
+    environment:
+      - DB_HOST=database
+    depends_on:
+      - "database"
+  database:
+    image: mjgargani/compose-example:database-trybe1.0
+    restart: always
+```
+- **volumes**: assim como na criação dos containers é possível associar volumes locais e do container, é possível configurar isso no `docker-compose`:
+```yaml
+version: "3.8"
+services:
+  web:
+    image: nginx:alpine
+    volumes:
+      - type: volume
+        source: mydata
+        target: /data
+        volume:
+          nocopy: true
+      - type: bind
+        source: ./static
+        target: /opt/app/static
+
+  db:
+    image: postgres:latest
+    volumes:
+      - "/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock"
+      - "dbdata:/var/lib/postgresql/data"
+
+volumes:
+  mydata:
+  dbdata:
+```
+- **networks**: é possível definir redes dentro do `docker-compose`:
+```yaml
+version: '3'
+
+services:
+  frontend-a:
+    build: ./frontend_a
+    networks:
+      - frontend
+
+  backend-a:
+    build: ./backend_a
+    networks:
+      - backend
+      - frontend
+
+  backend-b:
+    build: ./backend_b
+    networks:
+      - backend
+      - frontend
+
+  db:
+    image: mysql
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
+```
+
+## Gerenciando os serviços
+
+Agora podemos executar esse `docker-compose` com alguns comandos:
+- Executar todos os containers criados: `docker-compose up`
+- Executar um service específico: `docker-compose up <NAME-SERVICE>`
+- Se o arquivo não tiver o nome _docker-compose_: `docker-compose -f <FILE-NAME.yaml> up`
+- Forçar um novo `build` das _images_: `docker-compose up --build`
+- Parar todos os containers e remover todas redes: `docker-compose down`
+- Listar containers ativos, criados pelo `docker-compose`: `docker-compose ps`
+- Parar todos os containers mas persistir os redes: `docker-compose stop <SERVICE-NAME || null>`
+- Iniciar os services "_stopados_": `docker-compose start <SERVICE-NAME || null>`
