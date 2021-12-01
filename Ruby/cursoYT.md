@@ -223,3 +223,150 @@ Válido lembrar que funções em Ruby possuem retorno automático
 
   end
   ```
+
+# Orientação a objetos
+
+## Classes
+Como definir uma classe em Ruby:
+```rb
+class NomeClasse
+  # getter
+  def nome
+    @nome
+  end
+
+  # setter
+  def nome = (value)
+    @nome = (value)
+  end
+end
+```
+## Construtor
+Podemos criar um Constructor da seguinte maneira:
+```rb
+class Nomeclass
+  def initialize(attr1, attr2, ...)
+    @attr1 = attr1
+    @attr2 = attr2
+    .
+    .
+    .
+  end
+end
+```
+Assim se quisessemos criar uma classe `Carro`, por exemplo, faríamos da seguinte maneira:
+```rb
+class Carro
+  def initialize(nome = "Modelo Padrão")
+    @nome = nome
+  end
+
+  def nome=(value)
+    @nome = value
+  end
+
+  def nome
+    @nome
+  end
+
+  def pneu=(value)
+    @pneu = value
+  end
+
+  def pneu
+    @pneu
+  end
+
+  def porta=(value)
+    @porta = value
+  end
+
+  def porta
+    @porta
+  end
+
+  def painel=(value)
+    @painel = value
+  end
+
+  def painel
+    @painel
+  end
+
+  def roda=(value)
+    @roda = value
+  end
+
+  def roda
+    @roda
+  end
+
+  def mostrar(marca="Marca padrão")
+    puts "Marca: #{marca} - Modelo: #{@nome || self.nome || nome}"
+  end
+end
+```
+
+## Acessors
+É possível criar getters e setters de maneira mais fácil utilizando `attr_acessor` e `attr_reader`.
+Refatorando a nossa classe acima:
+```rb
+class Carro
+  def initialize(nome = "Modelo padrão")
+    @nome = nome
+  end
+
+  attr_acessor :nome, :pneu, :porta, :painel, :roda
+
+  def mostrar(marca="Marca padrão")
+    puts "Marca: #{marca} - Modelo: #{@nome || self.nome || nome}"
+  end
+end
+```
+O `attr_acessor` cria todos os `getters` e `setters`. É como se ele fizesse da seguinte forma:
+
+```rb
+def attr_acessor(*args)
+  args.each do |props|
+    eval("
+      def #{props}=(value)
+        @#{props} = value
+      end
+
+      def #{props}
+        @#{props}
+      end
+    ")
+  end
+end
+```
+Se eu não quisesse que um dos atributos, no caso o pneu, por exemplo, tivesse apenas o `setter`:
+```rb
+class Carro
+  def initialize(nome = "Modelo padrão")
+    @nome = nome
+  end
+
+  attr_acessor :nome, :porta, :painel, :roda
+  attr_writer :pneu # é como se fizesse def pneu = (value); @pneu = value; end
+
+  def mostrar(marca="Marca padrão")
+    puts "Marca: #{marca} - Modelo: #{@nome || self.nome || nome}"
+  end
+end
+```
+Se eu não quisesse que um dos atributos, no caso o pneu, por exemplo, tivesse apenas o `getter`:
+```rb
+class Carro
+  def initialize(nome = "Modelo padrão")
+    @nome = nome
+  end
+
+  attr_acessor :nome, :porta, :painel, :roda
+  attr_reader :pneu # é como se fizesse def pneu; @pneu; end
+
+  def mostrar(marca="Marca padrão")
+    puts "Marca: #{marca} - Modelo: #{@nome || self.nome || nome}"
+  end
+end
+```
