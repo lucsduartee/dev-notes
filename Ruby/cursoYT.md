@@ -370,3 +370,131 @@ class Carro
   end
 end
 ```
+
+## Herança
+É da seguinte maneira que declaramos uma herança em Ruby:
+```rb
+# carro.rb
+class Carro
+  attr_acessor :nome, :portas
+
+end
+
+
+# fiesta.rb
+
+require_relative 'carro'
+
+class Fiesta < Carro
+
+end
+```
+## Public, Private e Protected
+Public - Acessível fora da classe;
+Private - Acessível somente dentro da classe;
+Protected - Acessível somente dentro da classe mas é possível acessar por herança;  
+Por padrão os métodos e as propriedades são públicas.  
+Tudo abaixo de `private`, `protected` e `public`, assim é de acordo com o escopo:  
+```rb
+class AlgumaClasse
+
+  attr_acessor :attr1, :attr2, ...
+
+  public
+  def metodopublic1; end
+  def metodopublic2; end
+  def metodopublic3; end
+
+  private
+  def metodoprivate1; end
+  def metodoprivate2; end
+  def metodoprivate3; end
+
+  protected
+  def metodoprotected1; end
+  def metodoprotected2; end
+  def metodoprotected3; end
+end
+```
+## Polimorfismo
+Polimorfismo é a capacidade da classe filha ter um método com o mesmo nome da classe pai mas com
+uma implementação própria. Porém ainda é possível esse método trazer a implementação da classe pai utilizando
+o `super`.
+```rb
+# Dessa primeira maneira estamos sobrescrevendo o método mostrar da classe Carro na classe Ferrari
+class Carro
+  def mostrar
+    puts "classe carro"
+  end
+end
+
+class Ferrari < Carro
+  def mostrar
+    puts "classe ferrari"
+  end
+end
+
+# Dessa maneira estamos trazendo o retorno do método mostrar para destro de uma variável.
+# Automaticamente o super pega o retorno da método da classe Pai que corresponde ao escopo em
+# que ele foi chamado:
+
+class Carro
+  def mostrar
+    puts "classe Carro"
+  end
+end
+
+class Ferrari < Carro
+  def mostrar
+    mostrar_classe_pai = super # super == "classe carro"
+    puts "classe ferrari"
+  end
+end
+```
+
+## Interface, Abstração, Singleton
+Interface é uma classe sem uma implementação e sem instâncias.
+Abstração é uma classe que possui algumas implementações apenas.
+Singleton é uma classe que possui apenas uma instância.
+
+```rb
+class GenericInterface
+  def initialize
+    raise "Classe não pode ser instanciada, somente herdada, e implementada"
+  end
+
+  def test1
+    raise "Método a ser implementado"
+  end
+
+  def test2
+    raise "Método 2 a ser implementado"
+  end
+end
+
+class GenericAbstract
+  def initialize
+    raise "Classe abstrata, não pode ser instanciada, somente herdada"
+  end
+
+  def test1
+    raise "Método não implementado"
+  end
+
+  def test2
+    "Método implementado"
+  end
+end
+
+# singleton.rb
+require 'singleton'
+
+class SingletonClass
+  include Singleton
+
+  def test1; "Teste método 1"; end
+  def test2; "Teste método 2"; end
+end
+```
+Importando o singleton, e usando ele dentro da nossa classe ele já cria um construtor privado.
+
