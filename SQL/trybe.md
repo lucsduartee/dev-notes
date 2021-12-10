@@ -89,3 +89,71 @@ Serve para concatenar dados. Se tivermos por exemplo duas colunas, uma de __nome
 SELECT CONCAT(first_name, ' ', last_name) AS 'Nome Completo' FROM NOMEDOBANCO.NOMEDATABELA;
 ```
 
+## Manipulando tabelas
+Válido diferenciar alguns tipos de aspas no _SQL_:
+
+- Backticks: são utilizados para identificar tabelas e colunas, e faz-se necessárias quando o identificador for uma palavra reservada do MySQL, ou quando o nome da coluna ou tabela tiver espaços em branco.
+
+- Aspas simples: Utilizadas para o tipo strings
+
+### INSERT
+Permite inserir dados em uma tabela, a síntaxe básica dessa operação é a seguinte:
+```sql
+INSERT INTO NOMEDATABELA (COLUNA1, COLUNA2)
+VALUES ('VALORCOLUNA1', 'VALORCOLUNA2');
+```
+Essa operação insere uma linha na tabela com os valores nas suas respectivas colunas.
+É possível ainda inserir mais de uma linha em apenas uma _query_. Isso da seguinte maneira:
+```sql
+INSERT INTO NOMEDATABELA (COLUNA1, COLUNA2) VALUES
+('VALOR_1', 'VALOR_2'),
+('VALOR_3', 'VALOR_4'),
+('VALOR_5', 'VALOR_6');
+```
+Podemos ainda incrementar à nossa _query_ um parâmetro _IGNORE_, que permite quem em caso de rerro na execução da _query_, esse erro é relevado e não há interrupção na execução.
+VAmos utillizar um exemplo em que estamos tentando inserir em nossa tabela um registro já existente, para previnir um erro, fazemos a seguinte _query_:
+```sql
+INSERT IGNORE INTO NOMETABELA (COL1, COL2) VALUES
+(3, 'VALUE1'),
+(4, 'VALUE2');
+```
+Se algum desses registros já existirem em nossa tabela, um erro não será gerado por conta da presença do `INGNORE`.
+
+Com o `INSERT` é possível também inserir dados em um tabela à partir de outra tabela, da seguinte maneira:
+```sql
+INSERT INTO TABELA_A (COLUNA1, COLUNA2)
+SELECT TABELA_B.COLUNA1, TABELA_B.COLUNA2
+FROM TABELA_B;
+```
+
+### UPDATE
+Com o `UPDATE` podemos alterar registros em uma tabela, premitindo assum fazermos correções. A síntaxe desse comando é:
+```sql
+UPDATE NOMEDATABELA
+SET PROP_A_SER_MODIFICADA = 'NOVO_VALOR'
+WHERE CONDITION;
+```
+É muito importante que o `WHERE` esteja presente, caso ele não se faça presente, toda a tabela é alterada.
+
+É possível ainda alterar mais de uma coluna ao mesmo tempo tempo, utilizando a seguinte _query_:
+```sql
+UPDATE NOMEDATABELA
+SET COLUNA1 = 'NOVO_VALOR', COLUNA2 = 'OUTRO_NOVO_VALOR'
+WHERE CONDITION;
+```
+Podemos também alterar dados massivamente de diversas maneiras, duas delas estarão listdas abaixo:
+```sql
+UPDATE NOMEDATABELA
+SET NOMEDACOLUNA = 'NOVO_VALOR'
+WHERE NOMEDACOLUNA2 IN (VALUE1, VALUE2, VALUE3, ...);
+
+UPDATE NOMEDATABELA
+SET NOMEDACOLUNA = (
+	CASE NOMEDACOLUNA2
+		WHEN VALUE1 THEN 'NOVO_VALOR'
+		WHEN VALUE2 THEN 'NOVO_VALOR2'
+		WHEN VALUE3 THEN 'NOVO_VALOR3'
+		ELSE NOMEDACOLUNA
+	END
+);
+```
