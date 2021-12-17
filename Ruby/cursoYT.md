@@ -498,3 +498,19 @@ end
 ```
 Importando o singleton, e usando ele dentro da nossa classe ele já cria um construtor privado.
 
+## Instalar Gems
+
+Preciso criar um arquivo chamado Gemfile com o seguinte conteúdo:
+```gemfile
+source 'https://rubygems.org'
+
+gem 'gemname'
+```
+E depois no terminal utilizar o comando `bundle install` para instalar as dependências.
+É possível ainda `lockar` a versão que eu quero da `gem`:
+```gemfile
+source 'https://rubygems.org'
+
+gem 'gemname', "=x.x.x" # versão igual a x.x.x
+gem 'gemname', "~>x.x.x" # versão maior que x.x.x
+```
