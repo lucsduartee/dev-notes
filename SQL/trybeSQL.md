@@ -157,3 +157,49 @@ SET NOMEDACOLUNA = (
 	END
 );
 ```
+### Manipulação de Strings
+Há algumas funções do `SQL` que nos ajudam a deixar as informações coerentes, normalizadas e da maneira correta no momento do cadastro no banco de dados.
+AS principais funções para manipulação de string são:
+```sql
+-- Converte o texto da string em caixa baixa
+SELECT LCASE('Uma string qualquer');
+
+-- Converte o texto da string em caixa alta
+SELECT UCASE('Uma string qualquer');
+
+-- Substitui as ocorrências de uma substring em um string
+SELECT REPLACE('Uma string qualquer', 'qualquer', 'específica');
+
+-- Retorna a parte da esquerda ou da direita de uma string de acordo com um numero especificado
+SELECT LEFT||RIGHT('Uma string qualquer', 3);
+
+-- Retorna o tamanho de uma string em caracteres ou em bytes
+SELECT CHAR_LENGTH||LENGTH('Uma string qualquer');
+
+-- Extrai a parte de uma string de acordo com o índice de um caractere inicial e a qtd de caracteres para extrair
+-- Se a quantidade de caracteres para ser extraido não for especificada, então a string será extraída do índice incial definido
+-- até o seu final
+SELECT SUBSTRING('Uma string qualquer', 5, 2);
+```
+
+### Condicionais
+É possível utilizar IF e CASE no `SQL`:
+A síntaxe do IF é `-- SELECT IF (CONDICAO, VALOR_SE_VERDADEIRO, VALOR_SE_FALSO);` e a síntaxe do CASE é:
+```sql
+SELECT coluna1, coluna2,...
+	CASE
+		WHEN condicao1 THEN valor_se_verdadeiro
+		WHEN condicao2 THEN valor_se_verdadeiro
+	ELSE valor_default
+END AS nome_da_coluna_resultante
+FROM nome_do_database;
+```
+
+### Funções Matemáticas do MySQL
+- Operações básicas:
+```sql
+SELECT 3 + 3;
+SELECT 3 - 3;
+SELECT 3 * 3;
+SELECT 3 / 3;
+```
