@@ -25,8 +25,16 @@ Existem dois sistemas de módulos difundidos na comunidade JS, os _Módulos ES6_
 ### Exportando módulos com o CommonJS
 Para exportar algo com esse sistemas de módulos, utilizamos uma variável global chamada `module.exports`, e atribuimos a ela um valor que gostaríamos de exportar:
 ```js
+// name.js
 const name = 'Alfredo';
 
 module.exports = name;
 ```
 O `module.exports` pode receber qualquer valor que seja válido em _JavaScript_, isso inclui variáveis, objetos, funções, classe...
+Agora, para fazer a importação desse módulo em um outro arquivo, fazemos da seguinte maneira:
+```js
+const name = require('./name.js');
+
+console.log(name); // Alfredo
+```
+Dessa forma conseguimos utilizar a constante `name` em qualquer outra parte da nossa aplicação.
