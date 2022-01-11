@@ -47,4 +47,14 @@ Para executar os testes precisamos criar um pacote _node_ com o `npm init` e den
 ```
 e executamos o teste com os comandos `npm run test` ou simplesmente `npm test`.
 
-## TDD
+Podemos também utilizar a biblioteca `Sinon` para criar uma espécie de dublê de testes. Dessa maneira podemos meio que mockar
+valores para o teste. Ele pode ser instalado com o comando `npm install --save-dev sinon`. Um dos tipos de dublê dessa biblioteca
+é o `stub`, que é um objeto que podemos utilizar para simular interações com dependências externas ao que estamos testando de fato.
+Um exemplo seria a criação de um `stub` para a função de leitura do módulo `fs`.
+```js
+const fs = require('fs');
+const sinon = require('sinon');
+
+sinon.stub(fs, 'readFileSync')
+  .returns('Valor a ser retornado');
+```
