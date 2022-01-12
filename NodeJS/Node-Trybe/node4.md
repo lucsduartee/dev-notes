@@ -144,3 +144,11 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 ```
+Para mandarmos informações para um servidor, utilizamos um outro verbo HTTP, nesse caso, o __POST__:
+```js
+app.post('/recipes', (req, res) => {
+  const { id, name, price } = req.body;
+  recipes.push({ id, name, price });
+  res.status(201).json({ message: 'Recipe created succesfully!' });
+});
+```

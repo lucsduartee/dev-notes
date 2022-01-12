@@ -28,6 +28,12 @@ app.get('/recipes/:id', (req, res) => {
   res.status(200).json(recipe);
 });
 
+app.post('/recipes', (req, res) => {
+  const { id, name, price } = req.body;
+  recipes.push({ id, name, price });
+  res.status(201).json({ message: 'Recipe created succesfully!' });
+});
+
 app.listen(3001, () => {
   console.log('listening on port 3001');
 });
