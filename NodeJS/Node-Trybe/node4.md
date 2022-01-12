@@ -88,3 +88,36 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 ```
+
+# Primeira API
+Abaixo temos um código de uma simples API que podemos construir:
+```js
+const express = require('express');
+
+const app = express();
+
+const recipes = [
+  {id: 1, name: 'Lasanha', price: 50.0, waitTime: 32},
+  {id: 2, name: 'Macarrão', price: 30.0, waitTime: 20},
+  {id: 3, name: 'Churrasco', price: 55.0, waitTime: 40},
+];
+
+app.get('/recipes', (req, res) => {
+  res.json(recipes);
+});
+
+app.listen(3001, () => {
+  console.log('listening on port 3001');
+});
+```
+Podemos também passar parãmetros para uma rota, o _express_ nos permite fazer isso.
+Se liga:
+```js
+app.get('/recipes/:id', (req, res) => {
+  const { id } = req.params;
+  const recipe = recipes.find(recipe => recipes.id === .parseInt(id));
+
+  if (!recipe) return res.status(404).json({ message: 'Recipe not found' });
+  res.status(200).json(recipe);
+});
+```
