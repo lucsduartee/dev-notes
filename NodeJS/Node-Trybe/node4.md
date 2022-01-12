@@ -132,3 +132,15 @@ app.get('/recipes/search', (req, res) => {
   res.status(200).json(filtredRecipes);
 });
 ```
+
+# Body de uma requisição
+Ao invés de sempre passar dados pela url, podemos passar dados pelo corpo da requisição. É uma maneira de mandarmos dados
+comprimidos que serão descomprimidos apenas no servidor. Assim podemos mandar dados sensíveis, por exemplo.
+Para isso devemos utilizar um framework que fará essa compresão (_parseador_), chamado __body-parser__: `npm i body-parser`.
+E utilizamos ele da seguinte maneira:
+```js
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.json());
+```

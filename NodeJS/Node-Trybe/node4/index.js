@@ -1,6 +1,8 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
 
 const recipes = [
   {id: 1, name: 'Lasanha', price: 50.0, waitTime: 32},
@@ -20,7 +22,7 @@ app.get('/recipes/search', (req, res) => {
 
 app.get('/recipes/:id', (req, res) => {
   const { id } = req.params;
-  const recipe = recipes.find(recipe => recipes.id === parseInt(id));
+  const recipe = recipes.find(recipe => recipe.id === parseInt(id));
 
   if (!recipe) return res.status(404).json({ message: 'Recipe not found' });
   res.status(200).json(recipe);
