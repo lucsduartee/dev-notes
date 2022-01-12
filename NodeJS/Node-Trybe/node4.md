@@ -121,3 +121,14 @@ app.get('/recipes/:id', (req, res) => {
   res.status(200).json(recipe);
 });
 ```
+# Query strings
+Aqui podemos definir na url uma espécie de Query onde podemos criar filtros ou pesquisar por coisas específicas.
+Essas urls são aquelas do tipo: `/cadeiras?t=gamer&precoMinimo=300`. O que vem depois do interroagação é chamado de query string.
+É possível passar qualquer coisa depois nesse query string desde que siga o padrão `<chave>=<valor>` e podemos contaner utilizando o `&`.
+```js
+app.get('/recipes/search', (req, res) => {
+  const { name, maxPrice } = req.query;
+  const filtredRecipes = recipes.filter(r => r.name.includes(name) && r.price < parseInt(maxPrice));
+  res.status(200).json(filtredRecipes);
+});
+```

@@ -12,6 +12,12 @@ app.get('/recipes', (req, res) => {
   res.json(recipes);
 });
 
+app.get('/recipes/search', (req, res) => {
+  const { name, maxPrice } = req.query;
+  const filtredRecipes = recipes.filter(r => r.name.includes(name) && r.price < parseInt(maxPrice));
+  res.status(200).json(filtredRecipes);
+});
+
 app.get('/recipes/:id', (req, res) => {
   const { id } = req.params;
   const recipe = recipes.find(recipe => recipes.id === parseInt(id));
