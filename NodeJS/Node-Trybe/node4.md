@@ -152,3 +152,41 @@ app.post('/recipes', (req, res) => {
   res.status(201).json({ message: 'Recipe created succesfully!' });
 });
 ```
+
+# Atualizando e deletando objetos por meio de uma API
+Há dois métodos HTTP que executam essa tarefa para a gente, que seria respectivamente o __PUT__ e o __DELETE__.
+Com o _Express_ podemos criar rotas para essas rotinas. Começando pelo __PUT__:
+```js
+app.put('/recipes/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, price } = req.body;
+  const recipeIndex = recipes.findIndex(r => r.id === +id);
+
+  if (recipeIndex === -1) return res.status(404).json({ message: 'Recipe not found! '});
+  
+  recipes[recipeIndex] = { ...recipes[recipeIndex], name, price };
+
+  res.status(204).end();
+});
+```
+Nesse tipo de requisição, para ficarmos dentro do padrão RESTful, passamos por parêmetro o id que gostaríamos de alterar
+e também mandamos no corpo da requisição o conteúdo que queremos inserir.
+Agora para deletar usamos o verbo __DELETE__:
+```js
+app.delete('/recipes/:id', (req, res) => {
+  const { id } = req.params;
+  const recipeIndex = recipes.findIndex((r) => r.id === parseInt(id));
+
+  if (recipeIndex === -1) return res.status(404).json({ message: 'Recipe not found!' });
+
+  recipes.splice(recipeIndex, 1);
+
+  res.status(204).end();
+});
+```
+E ainda podemos criar uma rota para responder a uma requisição não encontrada:
+```js
+app.all('*', function (req, res) {
+    return res.status(404).json({ message: `Rota '${req.path}' não existe!`});
+});
+```

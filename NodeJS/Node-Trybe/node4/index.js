@@ -34,6 +34,33 @@ app.post('/recipes', (req, res) => {
   res.status(201).json({ message: 'Recipe created succesfully!' });
 });
 
+app.put('/recipes/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, price } = req.body;
+  const recipeIndex = recipes.findIndex(r => r.id === +id);
+
+  if (recipeIndex === -1) return res.status(404).json({ message: 'Recipe not found! '});
+  
+  recipes[recipeIndex] = { ...recipes[recipeIndex], name, price };
+
+  res.status(204).end();
+});
+
+app.delete('/recipes/:id', (req, res) => {
+  const { id } = req.params;
+  const recipeIndex = recipes.findIndex((r) => r.id === parseInt(id));
+
+  if (recipeIndex === -1) return res.status(404).json({ message: 'Recipe not found!' });
+
+  recipes.splice(recipeIndex, 1);
+
+  res.status(204).end();
+});
+
+app.all('*', function (req, res) {
+  return res.status(404).json({ message: `Rota '${req.path}' não existe!`});
+});
+
 app.listen(3001, () => {
   console.log('listening on port 3001');
 });
