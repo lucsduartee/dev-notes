@@ -258,3 +258,43 @@ app.use(function (err, req, res, next) {
   res.json({ error: err });
 });
 ```
+Uma maneira de enviar os erros em Middlewares assíncronos é utilizando o `try` e `catch`:
+```js
+const express = require('express');
+const fs = require('fs/promises');
+
+const app = express();
+
+app.get('/:fileName', async (req, res, next) => {
+  try {
+    const file = await fs.readFile(`./${req.params.fileName}`);
+    res.send(file.toString('utf-8'));
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: `Erro: ${err.message}`});
+})
+```
+
+Para não precisar ficar criando toda vez essa estrutura de `try` e `catch`, existe um pacote do express que se chama
+`express-rescue` que pode ser instalado com `npm i express-recue`.
+Refatorando o código acima utilzando o rescue:
+```js
+const express = require('express');
+const rescue = require('express-rescue');
+const fs = require('fs/promises');
+
+const app = express();
+
+app.get('/:fileName', rescue(async (req, res) => {
+  const file = await fs.readFile(`./${req.params.fileName}`);
+  res.send(file.toString('utf-8'));
+}));
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: `Erro: ${err.message}`});
+});
+```
