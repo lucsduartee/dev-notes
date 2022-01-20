@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const Author = require('./controllers/Author');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
