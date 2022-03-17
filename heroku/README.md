@@ -84,8 +84,18 @@ jobs:
           run: npx eslint .
 ```
 ## Coisas legais que dão pra fazer:
-Tem mais algumas coisas bacnas que dão para ser feitas com esse esquema de deploy, como por exemplo:
+Tem mais algumas coisas bacanas que dão para ser feitas com esse esquema de deploy, como por exemplo:
 - Fazer um CD com o Heroku:
   - Na aba de deploy do seu app heroku no dashboard deles é possível atrelar seu app a um repositório git, dessa forma é possivel fazer com que toda vez que um commit numa branch master for realizado, ele será deployado automaticamente
 
 - Criar um banco de dados hospedado no [Supabase](https://supabase.com/)
+
+## Criando uma pipeline com Heroku
+
+Primeiro precisamos de um app heroku e com o seguinte comando, adicioná-lo a uma pipeline:
+```bash
+heroku pipelines:create workflow -a meu-app # workflow se refere ao nome da pipeline, -a aponta pra um app
+```
+Mais comandos de pipeline:
+- Adicionando um app a uma pipeline: `heroku pipelines:add workflow -a meu-app-test`
+- Promover um app para um próximo estágio da pipeline: `heroku pipelines:promote -a meu-app`
